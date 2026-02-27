@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>AI 编程词汇卡片 | Vocabulary Cards</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #3d4a6b;
+            --bg-secondary: #4a5a7a;
+            --card-color: #e8a598;
+            --card-color-dark: #d49588;
+            --text-primary: #3d4a6b;
+            --text-light: #f5f0e8;
+            --accent-color: #c45c4a;
+            --shadow-color: rgba(45, 55, 80, 0.4);
+            --success-color: #4ade80;
+            --error-color: #ef4444;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'VT323', monospace;
+            background-color: var(--bg-primary);
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 30px;
+            color: var(--text-light);
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .group-name {
+            background: rgba(232, 165, 152, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--card-color);
+            border: 1px solid rgba(232, 165, 152, 0.3);
+        }
+
+        .nav-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(232, 165, 152, 0.2);
+            border: 1px solid rgba(232, 165, 152, 0.3);
+            color: var(--card-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(232, 165, 152, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .page-indicator {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .header-center {
+            text-align: center;
+        }
+
+        .header h1 {
+            font-family: 'VT323', monospace;
+            font-size: 1.8rem;
+            color: var(--card-color);
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 0.8rem;
+            color: rgba(245, 240, 232, 0.7);
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .test-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .test-btn:hover {
+            background: #b04d3d;
+            transform: translateY(-2px);
+        }
+
+        .wrong-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .wrong-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .wrong-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .wrong-count {
+            background: var(--error-color);
+            color: white;
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .wrong-count:empty, .wrong-count[data-count="0"] {
+            display: none;
+        }
+
+        /* ===== CARD GRID ===== */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 1400px;
+            flex: 1;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            height: calc((100vh - 180px) / 3);
+            min-height: 160px;
+            max-height: 220px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card-container.learned {
+            opacity: 0.5;
+            filter: grayscale(30%);
+        }
+
+        .card-container.learned .card-face {
+            box-shadow: 4px 4px 0 var(--shadow-color);
+        }
+
+        .learned-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--success-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            z-index: 10;
+            font-weight: 500;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 8px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow:
+                4px 4px 0 var(--shadow-color),
+                inset 0 0 0 2px rgba(255,255,255,0.1);
+        }
+
+        /* Card Front */
+        .card-front {
+            background: var(--card-color);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .card-front .vocab-en {
+            font-family: 'VT323', monospace;
+            font-size: 2rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .card-front .vocab-cn {
+            font-size: 1rem;
+            color: var(--text-primary);
+            opacity: 0.9;
+        }
+
+        .card-front .card-number {
+            position: absolute;
+            top: 8px;
+            left: 10px;
+            font-family: 'VT323', monospace;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            opacity: 0.6;
+        }
+
+        /* Card Back */
+        .card-back {
+            background: var(--card-color-dark);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            padding: 10px;
+        }
+
+        .card-back .back-title {
+            font-family: 'VT323', monospace;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid rgba(61, 74, 107, 0.2);
+        }
+
+        .card-back .content-text {
+            color: var(--text-primary);
+            font-size: 0.75rem;
+            line-height: 1.5;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .card-images {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .card-images img {
+            width: 50%;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid rgba(61, 74, 107, 0.2);
+        }
+
+        /* Hover effects */
+        .card-container:hover .card:not(.flipped) {
+            transform: translateY(-3px);
+        }
+
+        .card-container:hover .card-face {
+            box-shadow:
+                6px 6px 0 var(--shadow-color),
+                inset 0 0 0 2px rgba(255,255,255,0.2);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(61, 74, 107, 0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-color);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .modal-close:hover {
+            opacity: 1;
+        }
+
+        .modal-title {
+            font-family: 'VT323', monospace;
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .modal-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        .modal-explanation {
+            color: var(--text-primary);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 8px;
+        }
+
+        .modal-images {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-images img {
+            flex: 1;
+            height: 200px;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 2px solid rgba(61, 74, 107, 0.2);
+        }
+
+        .modal-images .image-placeholder {
+            flex: 1;
+            height: 150px;
+            background: rgba(61, 74, 107, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            opacity: 0.5;
+            font-size: 0.9rem;
+        }
+
+        .modal-learn-btn {
+            background: var(--success-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .modal-learn-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 222, 128, 0.3);
+        }
+
+        .modal-learn-btn.learned {
+            background: var(--text-primary);
+        }
+
+        /* ===== TEST MODE ===== */
+        .test-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 53, 97, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .test-overlay.hidden {
+            display: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .test-content {
+            background: linear-gradient(145deg, #3d4a6b, #4a5a8a);
+            border-radius: 24px;
+            padding: 30px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow:
+                0 25px 80px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes modalPop {
+            0% { transform: scale(0.9) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .test-progress {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+
+        .test-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-light);
+            font-size: 1.3rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .test-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .test-vocab-card {
+            background: linear-gradient(145deg, rgba(232, 165, 152, 0.95), rgba(212, 149, 136, 0.95));
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .test-vocab-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+            pointer-events: none;
+        }
+
+        .test-vocab-en {
+            font-family: 'VT323', monospace;
+            font-size: 3rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+        }
+
+        .test-vocab-cn {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            opacity: 0.85;
+            margin-bottom: 10px;
+        }
+
+        .test-learned-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .test-learned-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 222, 128, 0.5);
+        }
+
+        .test-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .test-option {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+            padding: 16px 18px;
+            border-radius: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            transition: all 0.25s ease;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            animation: optionFadeIn 0.35s ease backwards;
+        }
+
+        .test-option:nth-child(1) { animation-delay: 0.08s; }
+        .test-option:nth-child(2) { animation-delay: 0.16s; }
+        .test-option:nth-child(3) { animation-delay: 0.24s; }
+        .test-option:nth-child(4) { animation-delay: 0.32s; }
+
+        @keyframes optionFadeIn {
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .test-option:hover {
+            background: rgba(232, 165, 152, 0.25);
+            border-color: rgba(232, 165, 152, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .test-option.correct {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            border-color: #4ade80;
+            color: white;
+            box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+        }
+
+        .test-option.wrong {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            border-color: #ef4444;
+            color: white;
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* Test Results */
+        .test-results {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .test-score-display {
+            margin-bottom: 25px;
+        }
+
+        .test-score-label {
+            color: rgba(245, 240, 232, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .test-score-value {
+            font-family: 'VT323', monospace;
+            font-size: 4rem;
+            color: var(--success-color);
+            text-shadow: 0 4px 20px rgba(74, 222, 128, 0.4);
+        }
+
+        .test-errors {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .test-errors-title {
+            color: #f87171;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .error-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .error-list li {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .error-list li:last-child {
+            border-bottom: none;
+        }
+
+        .test-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .test-restart-btn, .test-close-btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .test-restart-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+        }
+
+        .test-restart-btn:hover {
+            background: #b04d3d;
+            transform: translateY(-2px);
+        }
+
+        .test-close-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .test-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .test-content {
+                padding: 20px;
+            }
+            .test-options {
+                grid-template-columns: 1fr;
+            }
+            .test-vocab-en {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: 15px;
+            text-align: center;
+            font-family: 'VT323', monospace;
+            color: rgba(245, 240, 232, 0.5);
+            font-size: 0.75rem;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .card-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+            }
+            .card-container {
+                height: calc((100vh - 200px) / 4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+            }
+            .card-container {
+                height: calc((100vh - 220px) / 6);
+                min-height: 80px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .header-top {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .test-options {
+                grid-template-columns: 1fr;
+            }
+            .modal-images {
+                flex-direction: column;
+            }
+            .modal-images img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px 15px;
+            }
+            .card-front .vocab-en {
+                font-size: 1.5rem;
+            }
+            .card-back .content-text {
+                font-size: 0.7rem;
+            }
+            .card-images {
+                display: none;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-container {
+            animation: fadeIn 0.3s ease-out backwards;
+        }
+
+        .card-container:nth-child(1) { animation-delay: 0.03s; }
+        .card-container:nth-child(2) { animation-delay: 0.06s; }
+        .card-container:nth-child(3) { animation-delay: 0.09s; }
+        .card-container:nth-child(4) { animation-delay: 0.12s; }
+        .card-container:nth-child(5) { animation-delay: 0.15s; }
+        .card-container:nth-child(6) { animation-delay: 0.18s; }
+        .card-container:nth-child(7) { animation-delay: 0.21s; }
+        .card-container:nth-child(8) { animation-delay: 0.24s; }
+        .card-container:nth-child(9) { animation-delay: 0.27s; }
+        .card-container:nth-child(10) { animation-delay: 0.30s; }
+        .card-container:nth-child(11) { animation-delay: 0.33s; }
+        .card-container:nth-child(12) { animation-delay: 0.36s; }
+    </style>
+</head>
+<body>
+    <header class='header'>
+        <div class='header-top'>
+            <div class='group-name' id='groupName'>第一组：开发环境与运行基础</div>
+            <div class='nav-buttons'>
+                <button class='nav-btn' id='prevBtn' onclick='changePage(-1)'>← 上一页</button>
+                <span class='page-indicator' id='pageIndicator'>1/4</span>
+                <button class='nav-btn' id='nextBtn' onclick='changePage(1)'>下一页 →</button>
+            </div>
+        </div>
+        <div class='header-center'>
+            <h1>&lt;AI 编程词汇卡片 /&gt;</h1>
+            <p class='subtitle'>点击卡片翻转查看解释</p>
+        </div>
+        <div class='header-actions'>
+            <button class='test-btn' onclick='startTest()'>🎯 开始测试</button>
+            <button class='wrong-btn' onclick='startWrongTest()'>📝 错题本 <span class='wrong-count' id='wrongCount'>0</span></button>
+        </div>
+    </header>
+
+    <main class='card-grid' id='cardGrid'>
+        <!-- Cards will be rendered by JavaScript -->
+    </main>
+
+    <footer class='footer'>
+        <div>Made with 💻 & ☕ | Programming Vocabulary Cards</div>
+    </footer>
+
+    <!-- Modal for enlarged card view -->
+    <div class='modal-overlay' id='modalOverlay' onclick='closeModal(event)'>
+        <div class='modal-content' onclick='event.stopPropagation()'>
+            <button class='modal-close' onclick='closeModal()'>&times;</button>
+            <h2 class='modal-title' id='modalTitle'>IDE</h2>
+            <p class='modal-subtitle' id='modalSubtitle'>集成开发环境</p>
+            <div class='modal-explanation' id='modalExplanation'>
+                IDE就像一间工具齐全的工作室...
+            </div>
+            <div class='modal-images' id='modalImages'>
+                <!-- Images will be inserted here -->
+            </div>
+            <button class='modal-learn-btn' id='modalLearnBtn' onclick='toggleLearnedFromModal()'>
+                ✓ 标记为已学会
+            </button>
+        </div>
+    </div>
+
+    <!-- Test Mode Overlay -->
+    <div class='test-overlay hidden' id='testOverlay' onclick='closeTest()'>
+        <div class='test-content' onclick='event.stopPropagation()'>
+            <div class='test-header'>
+                <div class='test-progress' id='testProgress'>1 / 10</div>
+                <button class='test-close' onclick='closeTest()'>×</button>
+            </div>
+            <div class='test-vocab-card'>
+                <div class='test-vocab-en' id='testVocabEn'>IDE</div>
+                <div class='test-vocab-cn' id='testVocabCn'>集成开发环境</div>
+                <button class='test-learned-btn' onclick='markTestVocabLearned()'>已学会</button>
+            </div>
+            <div class='test-options' id='testOptions'>
+                <!-- Options will be rendered here -->
+            </div>
+            <!-- Test Results Section -->
+            <div class='test-results hidden' id='testResults'>
+                <div class='test-score-display'>
+                    <div class='test-score-label'>正确率</div>
+                    <div class='test-score-value' id='testScore'>0%</div>
+                </div>
+                <div class='test-errors hidden' id='testErrors'>
+                    <div class='test-errors-title'>需要复习的词汇：</div>
+                    <ul class='error-list' id='errorList'></ul>
+                </div>
+                <div class='test-actions'>
+                    <button class='test-restart-btn' onclick='restartTest()'>再测一次</button>
+                    <button class='test-close-btn' onclick='closeTest()'>关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA: 44 Vocabulary Items =====
+        const vocabulary = [
+            // 第一组：开发环境与运行基础 (1-11)
+            { id: 1, group: 1, en: 'IDE', cn: '集成开发环境', imageKey: 'ide',
+              explanation: 'IDE就像一间工具齐全的工作室，桌子、灯光、电源都已经摆好，你进来就能干活。它是一个把写代码、运行程序、查错工具整合在一起的软件。在vibe coding里，它让你不用切来切去找工具，专注在"想法变代码"这件事上。' },
+            { id: 2, group: 1, en: 'VS Code', cn: '代码编辑器', imageKey: 'vscode',
+              explanation: 'VS Code像一把瑞士军刀，轻便但功能很多。是IDE的一种，可以安装插件扩展功能。在vibe coding里，它是你最顺手的创作台，可以装AI插件直接对话式写代码。' },
+            { id: 3, group: 1, en: 'Terminal', cn: '终端', imageKey: 'terminal',
+              explanation: '终端就像黑色控制台，你输入命令，电脑立刻执行。它是通过文字指令直接操作系统和程序的界面。在vibe coding里，它让你用几行命令快速启动项目、安装工具、跑程序。' },
+            { id: 4, group: 1, en: 'Environment Variable', cn: '环境变量', imageKey: 'env',
+              explanation: '环境变量像是贴在机器旁边的说明标签，告诉它去哪找工具。它是系统中存储关键配置信息的地方，比如路径或密钥。在vibe coding里，它帮你安全地存API key，让AI工具正常工作而不暴露秘密。' },
+            { id: 5, group: 1, en: 'Global Folder', cn: '全局文件夹', imageKey: 'global',
+              explanation: '全局文件夹像一间公共仓库，所有项目都能进来拿工具。它是系统级别的存储位置，安装的内容可以被多个项目使用。在vibe coding里，它让常用工具一次安装，到处可用，不用每次重新配置。' },
+            { id: 6, group: 1, en: 'Node.js', cn: 'Node.js', imageKey: 'nodejs',
+              explanation: 'Node.js像一个发动机，让JavaScript不仅能在网页里跑，也能在电脑上跑。它是一个运行环境，使JavaScript可以执行后台程序。在vibe coding里，它让你用同一套语言写网页、写脚本、写AI自动化流程。' },
+            { id: 7, group: 1, en: 'npm', cn: '包管理器', imageKey: 'npm',
+              explanation: 'npm像一个大型工具超市，你想要什么功能直接下载。它是Node.js的包管理器，用来安装和管理代码模块。在vibe coding里，它帮你快速接入现成功能，比如UI组件或AI接口。' },
+            { id: 8, group: 1, en: 'Dependency', cn: '依赖', imageKey: 'dependency',
+              explanation: '依赖就像做饭时必须用到的调料，没有它菜就做不成。它指的是项目运行所必须引用的外部代码或工具。在vibe coding里，它决定你的项目能不能顺利启动和运行。' },
+            { id: 9, group: 1, en: 'Local', cn: '本地', imageKey: 'local',
+              explanation: '本地像你家厨房，你在自己电脑上直接操作。它指程序在你自己的设备上运行。在vibe coding里，本地是你安全试错、随便实验的地方。' },
+            { id: 10, group: 1, en: 'Server', cn: '服务器', imageKey: 'server',
+              explanation: '服务器像一台24小时开机的机器，随时等着别人访问。它是一台专门用来存储数据和运行程序的远程计算机。在vibe coding里，它让你的作品不只存在你电脑，而是能被全世界访问。' },
+            { id: 11, group: 1, en: 'Deploy', cn: '部署', imageKey: 'deploy',
+              explanation: '部署像把做好的菜端到餐厅，让客人能点到。它是把本地开发完成的程序上传到服务器运行。在vibe coding里，部署是从"玩具项目"到"真实产品"的关键一步。' },
+
+            // 第二组：代码协作与项目结构 (12-22)
+            { id: 12, group: 2, en: 'Git', cn: '版本控制', imageKey: 'git',
+              explanation: 'Git像一台时间机器，每次保存都会留下一个可回到的历史节点。它是一个版本管理工具，用来记录代码的每次改动。在vibe coding里，它让你大胆实验，因为随时可以回退。' },
+            { id: 13, group: 2, en: 'GitHub', cn: '代码托管平台', imageKey: 'github',
+              explanation: 'GitHub像一个公开的代码仓库广场，所有人都可以协作。它是托管Git仓库的平台，用来存储和共享代码。在vibe coding里，它是展示作品和远程备份的地方。' },
+            { id: 14, group: 2, en: 'Repository', cn: '仓库', imageKey: 'repository',
+              explanation: '仓库像一个带目录的项目文件箱，所有代码都放在里面。它是存放项目代码和历史记录的容器。在vibe coding里，它是一个完整创作单位的载体。' },
+            { id: 15, group: 2, en: 'Commit', cn: '提交', imageKey: 'commit',
+              explanation: '提交像给文件拍一张快照，并贴上时间标签。它是一次代码保存记录，标记当前状态。在vibe coding里，它帮你把进度阶段性保存下来。' },
+            { id: 16, group: 2, en: 'Push', cn: '推', imageKey: 'push',
+              explanation: '推像把你电脑里的改动寄到远程仓库。它是把本地版本同步到“网上”在vibe coding里，它让你的创作成果同步到线上。' },
+            { id: 17, group: 2, en: 'Pull', cn: '拉', imageKey: 'pull',
+              explanation: '拉像从远程仓库把最新代码拽到自己电脑。它是把"网上”的更新同步到本地。在vibe coding里，它保证你总是在最新版本上继续创作。' },
+            { id: 18, group: 2, en: 'README', cn: '说明文档', imageKey: 'readme',
+              explanation: 'README像项目门口的说明书，告诉别人怎么玩。它是一个介绍项目用途、安装方法的说明文件。在vibe coding里，它帮你把想法讲清楚，让AI或别人快速理解你的项目。' },
+            { id: 19, group: 2, en: 'Markdown', cn: 'md文件', imageKey: 'mdfile',
+              explanation: 'md文件像可自动排版的笔记本，写起来简单，看起来整齐。里面写的都是人话而非代码。在vibe coding里，它是写提示词、写说明、写AI工作流的常用格式。' },
+            { id: 20, group: 2, en: 'Path', cn: '路径', imageKey: 'path',
+              explanation: '路径像地图上的路线，告诉电脑文件在哪。它是文件在系统中的位置地址。在vibe coding里，正确路径能让程序找到模型、数据和脚本。' },
+            { id: 21, group: 2, en: 'JSON', cn: '数据格式', imageKey: 'json',
+              explanation: 'JSON像一个结构清晰的快递清单，数据按键值配对摆放。它是一种常用的数据格式，用来传递信息。在vibe coding里，它常用于配置文件或AI接口数据交换。' },
+            { id: 22, group: 2, en: 'Script', cn: '脚本', imageKey: 'script',
+              explanation: '脚本像一段提前写好的指令清单，按顺序自动执行。它是一组可运行的命令，用来自动完成任务。在vibe coding里，它能把重复操作变成一键执行，提高创作效率。' },
+
+            // 第三组：网页、数据流与AI工具 (23-44)
+            { id: 23, group: 3, en: 'Frontend', cn: '前端', imageKey: 'frontend',
+              explanation: '前端像餐厅的大厅，是用户能直接看到的部分。它是负责界面展示和用户交互的代码。在vibe coding里，它决定你的想法能不能变成"看得见、点得动"的产品。' },
+            { id: 24, group: 3, en: 'Backend', cn: '后端', imageKey: 'backend',
+              explanation: '后端像餐厅的厨房，负责真正做菜。它是处理数据、逻辑和存储的程序部分。在vibe coding里，它支撑功能运转，比如存用户数据或处理AI请求。' },
+            { id: 25, group: 3, en: 'HTML', cn: '超文本标记语言', imageKey: 'html',
+              explanation: 'HTML像建筑的钢筋骨架，决定网页结构。它是网页的基础标记语言，用来定义页面内容。在vibe coding里，它是你快速搭出页面原型的第一步。' },
+            { id: 26, group: 3, en: 'API', cn: '应用程序接口', imageKey: 'api',
+              explanation: '接口像服务窗口，你递请求，它给回应。它是不同系统之间交换数据的通道。在vibe coding里，它让你接入AI模型、支付系统或数据库。' },
+            { id: 27, group: 3, en: 'Supabase', cn: '后端服务', imageKey: 'supabase',
+              explanation: 'Supabase像一个现成的数据仓库，帮你存数据和管理用户。它是一个后端服务平台，提供数据库和认证功能。在vibe coding里，它让你不用自己写复杂后端就能做出完整应用。' },
+            { id: 28, group: 3, en: 'Vercel', cn: '部署平台', imageKey: 'vercel',
+              explanation: 'Vercel像一个自动发布平台，把代码一键上线。它是一个部署前端项目的云服务。在vibe coding里，它帮你把作品快速公开给别人访问。' },
+            { id: 29, group: 3, en: 'Plugin', cn: '插件', imageKey: 'plugin',
+              explanation: '插件像给软件装外挂功能，装上就能多一种能力。它是扩展程序功能的附加模块。在vibe coding里，插件能让你的编辑器直接连接AI或自动补全代码。' },
+            { id: 30, group: 3, en: 'Bug', cn: '程序错误', imageKey: 'bug',
+              explanation: 'Bug像程序里的小裂缝，可能让整个系统出问题。它是代码中的错误或异常行为。在vibe coding里，发现Bug意味着你离稳定产品更近一步。' },
+            { id: 31, group: 3, en: 'Debug', cn: '调试', imageKey: 'debug',
+              explanation: '调试像排查故障的维修过程，一步步找出问题源头。它是定位并修复代码错误的过程。在vibe coding里，可以把报错信息发送给Claude让他帮忙分析。' },
+            { id: 32, group: 3, en: 'Workflow', cn: '工作流', imageKey: 'workflow',
+              explanation: '工作流像流水线，步骤按顺序自动运转。它是任务之间的执行顺序和连接方式。在vibe coding里，它能把"输入想法→调用AI→生成页面"自动串起来。' },
+            { id: 33, group: 3, en: 'MCP', cn: '模型上下文协议', imageKey: 'mcp',
+              explanation: 'MCP像一个任务调度中心，统一管理多个能力模块。它是一种把多个功能组件组合调用的机制。在vibe coding里，它让多个AI能力协同工作，而不是各自为战。' },
+            { id: 34, group: 3, en: 'Claude', cn: 'AI助手', imageKey: 'claude',
+              explanation: 'Claude像一个坐在你面前的超级助理，你说话，它立刻思考并回应，并且可以直接调用工具修改测试代码，可以住在VScode或者终端里，帮你写代码、改Bug、设计结构。' },
+            { id: 35, group: 3, en: 'Prompt', cn: '提示词', imageKey: 'prompt',
+              explanation: '提示词像你给助理下达的指令条，你说清楚，它才会做对。它是你输入给AI的具体要求或问题。在vibe coding里，提示词质量直接决定输出质量。' },
+            { id: 36, group: 3, en: 'System Prompt', cn: '系统提示词', imageKey: 'systemprompt',
+              explanation: '系统提示词像写在助理脑子里的长期规则。它是在对话开始前设定AI行为方式的隐藏指令。在vibe coding里，它能稳定输出风格和逻辑结构。' },
+            { id: 37, group: 3, en: 'Chain-of-Thought', cn: '思维链', imageKey: 'chainofthought',
+              explanation: '思维链像老师解数学题时把步骤写出来。它是模型在回答复杂问题时展开推理过程的方式。在vibe coding里，它能帮你看清AI是怎么推理代码问题的。' },
+            { id: 38, group: 3, en: 'Context Window', cn: '上下文窗口', imageKey: 'contextwindow',
+              explanation: '上下文窗口像一张有限大小的记忆白板，写满就得擦掉旧内容。它是模型一次能读取和记住的文字长度范围。在vibe coding里，它决定你能给AI多少项目背景。' },
+            { id: 39, group: 3, en: 'Token', cn: '词元', imageKey: 'token',
+              explanation: '词元像拼装积木的最小块，一句话由很多小块组成。调用AI会消耗token越多越贵。在vibe coding里，它影响成本和输入长度限制。' },
+            { id: 40, group: 3, en: 'Multimodal', cn: '多模态', imageKey: 'multimodal',
+              explanation: '多模态像一个既能听、能看、还能读的助手。它是模型同时处理文字、图片甚至音频等多种输入的能力。在vibe coding里，它让你用图片或草图直接生成代码。' },
+            { id: 41, group: 3, en: 'Hallucination', cn: '幻觉', imageKey: 'hallucination',
+              explanation: '幻觉像一个自信但记错细节的人。它是模型在没有真实依据时编造内容的现象。在vibe coding里，它提醒你必须验证AI生成的代码。' },
+            { id: 42, group: 3, en: 'Agent', cn: '智能体', imageKey: 'agent',
+              explanation: '智能体像一个会主动执行任务的数字员工。除了能聊天还能调用工具完成任务。在vibe coding里，它能直接在你的IDE里面改代码做测试。' },
+            { id: 43, group: 3, en: 'Skill', cn: '技能', imageKey: 'skill',
+              explanation: 'Skill像是AI掌握的技能包，里面包含说明文档，脚本和例子。让AI在特定任务上表现更稳定。在vibe coding里，它能让AI更稳定，更专业输出。' },
+            { id: 44, group: 3, en: 'Cloud', cn: '云端', imageKey: 'cloud',
+              explanation: '云端像一座远程机房，你不用买机器也能用算力。它是通过互联网运行和存储程序的远程服务器环境。在vibe coding里，它让你的AI应用持续在线运行，而不依赖你电脑开机。' }
+        ];
+
+        const groupNames = {
+            1: '第一组：开发环境与运行基础',
+            2: '第二组：代码协作与项目结构',
+            3: '第三组：网页、数据流与AI工具',
+            4: '第四组：AI技术相关'
+        };
+
+        // ===== STATE =====
+        let currentPage = 1;
+        let currentModalVocab = null;
+        let testQueue = [];
+        let testIndex = 0;
+        let testErrors = [];
+        let testCorrectCount = 0;
+        let currentTestVocab = null;
+        let isWrongTestMode = false; // 是否为错题本测试模式
+
+        // ===== STORAGE =====
+        const Storage = {
+            getLearned() {
+                const data = localStorage.getItem('learnedVocab');
+                return data ? JSON.parse(data) : [];
+            },
+            toggleLearned(id) {
+                const learned = this.getLearned();
+                const index = learned.indexOf(id);
+                if (index > -1) {
+                    learned.splice(index, 1);
+                } else {
+                    learned.push(id);
+                }
+                localStorage.setItem('learnedVocab', JSON.stringify(learned));
+                return learned.includes(id);
+            },
+            getPage() {
+                return parseInt(localStorage.getItem('currentPage')) || 1;
+            },
+            setPage(page) {
+                localStorage.setItem('currentPage', page);
+            },
+            // 错题本相关方法
+            getWrongAnswers() {
+                const data = localStorage.getItem('wrongAnswers');
+                return data ? JSON.parse(data) : [];
+            },
+            addWrongAnswer(id) {
+                const wrong = this.getWrongAnswers();
+                if (!wrong.includes(id)) {
+                    wrong.push(id);
+                    localStorage.setItem('wrongAnswers', JSON.stringify(wrong));
+                }
+            },
+            removeWrongAnswer(id) {
+                const wrong = this.getWrongAnswers();
+                const index = wrong.indexOf(id);
+                if (index > -1) {
+                    wrong.splice(index, 1);
+                    localStorage.setItem('wrongAnswers', JSON.stringify(wrong));
+                }
+            },
+            getWrongCount() {
+                return this.getWrongAnswers().length;
+            }
+        };
+
+        // ===== RENDERING =====
+        function renderCards() {
+            const grid = document.getElementById('cardGrid');
+            const startId = (currentPage - 1) * 11 + 1;
+            const endId = startId + 10;
+            const pageVocabs = vocabulary.filter(v => v.id >= startId && v.id <= endId);
+            const learned = Storage.getLearned();
+
+            grid.innerHTML = '';
+
+            pageVocabs.forEach((vocab, index) => {
+                const isLearned = learned.includes(vocab.id);
+                const container = document.createElement('div');
+                container.className = `card-container${isLearned ? ' learned' : ''}`;
+                container.dataset.id = vocab.id;
+                container.onclick = () => handleCardClick(vocab);
+
+                container.innerHTML = `
+                    ${isLearned ? '<div class="learned-badge">✓ 已学会</div>' : ''}
+                    <div class="card">
+                        <div class="card-face card-front">
+                            <span class="card-number">${String(vocab.id).padStart(2, '0')}</span>
+                            <div class="vocab-en">${vocab.en}</div>
+                            <div class="vocab-cn">${vocab.cn}</div>
+                        </div>
+                        <div class="card-face card-back">
+                            <div class="back-title">${vocab.en} / ${vocab.cn}</div>
+                            <div class="content-text">${vocab.explanation}</div>
+                            <div class="card-images">
+                                <img src='images/${vocab.imageKey}_screenshot.png' onerror="this.style.display='none'">
+                                <img src='images/${vocab.imageKey}_comic.png' onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(container);
+            });
+
+            // Fill remaining slots with empty cards
+            for (let i = pageVocabs.length; i < 12; i++) {
+                const emptyContainer = document.createElement('div');
+                emptyContainer.className = 'card-container card-empty';
+                emptyContainer.innerHTML = `
+                    <div class="card">
+                        <div class="card-face card-front">
+                            <div class="placeholder-content">
+                                <div class="placeholder-icon">?</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(emptyContainer);
+            }
+
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('groupName').textContent = groupNames[currentPage];
+            document.getElementById('pageIndicator').textContent = `${currentPage}/4`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === 4;
+        }
+
+        // ===== PAGINATION =====
+        function changePage(delta) {
+            const newPage = currentPage + delta;
+            if (newPage >= 1 && newPage <= 4) {
+                currentPage = newPage;
+                Storage.setPage(currentPage);
+                renderCards();
+            }
+        }
+
+        // ===== CARD INTERACTION =====
+        function handleCardClick(vocab) {
+            const container = document.querySelector(`.card-container[data-id='${vocab.id}']`);
+            const card = container.querySelector('.card');
+
+            // Flip the card first
+            card.classList.add('flipped');
+
+            // Open modal after 200ms
+            setTimeout(() => {
+                openModal(vocab);
+            }, 200);
+        }
+
+        // ===== MODAL =====
+        function openModal(vocab) {
+            currentModalVocab = vocab;
+            const learned = Storage.getLearned();
+            const isLearned = learned.includes(vocab.id);
+
+            document.getElementById('modalTitle').textContent = vocab.en;
+            document.getElementById('modalSubtitle').textContent = vocab.cn;
+            document.getElementById('modalExplanation').textContent = vocab.explanation;
+
+            const imagesContainer = document.getElementById('modalImages');
+            imagesContainer.innerHTML = `
+                <img src="images/${vocab.imageKey}_screenshot.png" onerror="this.style.display='none'">
+                <img src="images/${vocab.imageKey}_comic.png" onerror="this.style.display='none'">
+            `;
+
+            const btn = document.getElementById('modalLearnBtn');
+            btn.textContent = isLearned ? '✓ 已学会 (点击取消)' : '✓ 标记为已学会';
+            btn.className = `modal-learn-btn${isLearned ? ' learned' : ''}`;
+
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('modalOverlay').classList.remove('active');
+            currentModalVocab = null;
+        }
+
+        function toggleLearnedFromModal() {
+            if (!currentModalVocab) return;
+            const isNowLearned = Storage.toggleLearned(currentModalVocab.id);
+            renderCards();
+
+            const btn = document.getElementById('modalLearnBtn');
+            btn.textContent = isNowLearned ? '✓ 已学会 (点击取消)' : '✓ 标记为已学会';
+            btn.className = `modal-learn-btn${isNowLearned ? ' learned' : ''}`;
+        }
+
+        // ===== TEST MODE =====
+        // 提取解释的第二句话
+        function getSecondSentence(explanation) {
+            const sentences = explanation.split('。').filter(s => s.trim());
+            return sentences.length >= 2 ? sentences[1].trim() + '。' : explanation;
+        }
+
+        function startTest() {
+            isWrongTestMode = false;
+            const learned = Storage.getLearned();
+            testQueue = vocabulary.filter(v => !learned.includes(v.id));
+            testErrors = [];
+            testCorrectCount = 0;
+            testIndex = 0;
+
+            if (testQueue.length === 0) {
+                alert('🎉 恭喜！你已经学会了所有词汇！');
+                return;
+            }
+
+            // Shuffle test queue
+            testQueue = testQueue.sort(() => Math.random() - 0.5);
+
+            document.getElementById('testOverlay').classList.remove('hidden');
+            document.getElementById('testResults').classList.add('hidden');
+            showTestVocab();
+        }
+
+        // ===== 错题本测试 =====
+        function startWrongTest() {
+            const wrongIds = Storage.getWrongAnswers();
+
+            if (wrongIds.length === 0) {
+                alert('📝 错题本是空的，继续加油！');
+                return;
+            }
+
+            isWrongTestMode = true;
+            testQueue = vocabulary.filter(v => wrongIds.includes(v.id));
+            testErrors = [];
+            testCorrectCount = 0;
+            testIndex = 0;
+
+            // Shuffle test queue
+            testQueue = testQueue.sort(() => Math.random() - 0.5);
+
+            document.getElementById('testOverlay').classList.remove('hidden');
+            document.getElementById('testResults').classList.add('hidden');
+            showTestVocab();
+        }
+
+        function updateWrongCount() {
+            const count = Storage.getWrongCount();
+            const countEl = document.getElementById('wrongCount');
+            countEl.textContent = count;
+            countEl.dataset.count = count;
+
+            // 更新按钮状态
+            const wrongBtn = document.querySelector('.wrong-btn');
+            if (wrongBtn) {
+                wrongBtn.disabled = count === 0;
+            }
+        }
+
+        function showTestVocab() {
+            if (testIndex >= testQueue.length) {
+                showTestResults();
+                return;
+            }
+
+            currentTestVocab = testQueue[testIndex];
+            document.getElementById('testVocabEn').textContent = currentTestVocab.en;
+            document.getElementById('testVocabCn').textContent = currentTestVocab.cn;
+            document.getElementById('testProgress').textContent = `${testIndex + 1} / ${testQueue.length}`;
+
+            renderTestOptions();
+        }
+
+        function renderTestOptions() {
+            const optionsContainer = document.getElementById('testOptions');
+            optionsContainer.innerHTML = '';
+
+            // Generate options: correct + 3 random wrong
+            const wrongOptions = vocabulary
+                .filter(v => v.id !== currentTestVocab.id)
+                .sort(() => Math.random() - 0.5)
+                .slice(0, 3);
+
+            const options = [...wrongOptions, currentTestVocab].sort(() => Math.random() - 0.5);
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'test-option';
+                btn.textContent = getSecondSentence(opt.explanation);
+                btn.onclick = () => selectOption(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selected, btn) {
+            const isCorrect = selected.id === currentTestVocab.id;
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                testCorrectCount++;
+                testIndex++;
+
+                // 如果是错题本模式，答对了就从错题本移除
+                if (isWrongTestMode) {
+                    Storage.removeWrongAnswer(currentTestVocab.id);
+                    updateWrongCount();
+                }
+
+                setTimeout(showTestVocab, 500);
+            } else {
+                btn.classList.add('wrong');
+                testErrors.push({
+                    vocab: currentTestVocab,
+                    wrongAnswer: getSecondSentence(selected.explanation)
+                });
+
+                // 如果是普通测试模式，答错了就加入错题本
+                if (!isWrongTestMode) {
+                    Storage.addWrongAnswer(currentTestVocab.id);
+                    updateWrongCount();
+                }
+
+                // Disable wrong option
+                btn.disabled = true;
+                setTimeout(() => btn.classList.remove('wrong'), 500);
+            }
+        }
+
+        function markTestVocabLearned() {
+            Storage.toggleLearned(currentTestVocab.id);
+            testQueue = testQueue.filter(v => v.id !== currentTestVocab.id);
+            renderCards();
+
+            if (testIndex >= testQueue.length) {
+                showTestResults();
+            } else {
+                showTestVocab();
+            }
+        }
+
+        function showTestResults() {
+            const total = testCorrectCount + testErrors.length;
+            const accuracy = total > 0 ? Math.round((testCorrectCount / total) * 100) : 0;
+
+            document.getElementById('testScore').textContent = `${accuracy}%`;
+            document.getElementById('testProgress').textContent = '测试完成';
+
+            const errorList = document.getElementById('errorList');
+            errorList.innerHTML = '';
+
+            if (testErrors.length > 0) {
+                document.getElementById('testErrors').classList.remove('hidden');
+                testErrors.forEach(err => {
+                    const li = document.createElement('li');
+                    li.textContent = `${err.vocab.en} (${err.vocab.cn}) - 你选了: ${err.wrongAnswer}`;
+                    errorList.appendChild(li);
+                });
+            } else {
+                document.getElementById('testErrors').classList.add('hidden');
+            }
+
+            document.getElementById('testResults').classList.remove('hidden');
+            document.getElementById('testVocabEn').parentElement.classList.add('hidden');
+            document.getElementById('testOptions').classList.add('hidden');
+        }
+
+        function closeTest() {
+            document.getElementById('testOverlay').classList.add('hidden');
+            document.getElementById('testVocabEn').parentElement.classList.remove('hidden');
+            document.getElementById('testOptions').classList.remove('hidden');
+        }
+
+        function restartTest() {
+            document.getElementById('testVocabEn').parentElement.classList.remove('hidden');
+            document.getElementById('testOptions').classList.remove('hidden');
+            startTest();
+        }
+
+        // ===== KEYBOARD SUPPORT =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+                closeTest();
+            }
+            if (e.key === 'ArrowLeft') changePage(-1);
+            if (e.key === 'ArrowRight') changePage(1);
+        });
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            currentPage = Storage.getPage();
+            renderCards();
+            updateWrongCount();
+            console.log('%c🎴 词汇卡片已加载完成', 'color: #e8a598; font-size: 14px; font-weight: bold;');
+        });
+    </script>
+</body>
+</html>
